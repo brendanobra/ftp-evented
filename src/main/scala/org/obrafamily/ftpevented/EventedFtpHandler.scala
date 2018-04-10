@@ -14,7 +14,7 @@ class EventedFtpHandler extends  Ftplet {
   }
 
   override def beforeCommand(session: FtpSession, request: FtpRequest): FtpletResult = {
-    logger.info(s"------------- beforeCommand session=${session.getUser} request=${request.getArgument}")
+    logger.debug(s"------------- beforeCommand session=${session.getUser} request=${request.getArgument}")
     FtpletResult.DEFAULT
 
   }
@@ -22,15 +22,16 @@ class EventedFtpHandler extends  Ftplet {
   override def afterCommand(session: FtpSession, request: FtpRequest, reply: FtpReply): FtpletResult = {
     if (!request.hasArgument) return FtpletResult.SKIP
 
-      logger.info(s"afterCommand session=$session")
-      logger.info(s"afterCommand arg=${request.getArgument}")
+    if (! (request.getCommand.toUpperCase == "STOR") ) return FtpletResult.SKIP
+
       val fs = session.getFileSystemView
       logger.info(s"afterCommand fs=${fs}")
       if ((fs != null) && (fs.getWorkingDirectory != null)) {
         logger.info(s"fs.workingDir=${fs.getWorkingDirectory.getAbsolutePath}")
 
-        val thing = s"${session.getFileSystemView.getHomeDirectory.getAbsolutePath}/${session.getFileSystemView.getWorkingDirectory.getAbsolutePath}/${request.getArgument}"
-        logger.info(s"path=$thing")
+        val thing = s"${session.getUser.getHomeDirectory}${session.getFileSystemView.getWorkingDirectory.getAbsolutePath}/${request.getArgument}"
+        val event = Uploaded( thing )
+        logger.info(s"path=$event")
       }
 
 

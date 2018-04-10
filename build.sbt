@@ -1,5 +1,21 @@
 import Dependencies._
+
 scalaVersion := "2.12.2"
+
+name := "FTPEvented"
+
+version := "1.0.0"
+
+maintainer := "Brendan O'Bra"
+
+packageSummary := "FTP Server that emits events"
+
+packageDescription := """A thin , Apache Mina FTP based FTP server,
+  that can fire webhooks, kinesis, etc. events."""
+
+
+enablePlugins(JavaAppPackaging)
+
 lazy val root = (project in file(".")).
   settings(
     inThisBuild(List(
@@ -15,6 +31,7 @@ lazy val root = (project in file(".")).
       "com.typesafe.scala-logging" %% "scala-logging" % "3.8.0",
     "org.apache.ftpserver" % "ftpserver-core" % "1.1.1",
     "org.apache.ftpserver" % "ftplet-api" % "1.1.1" ,
+      "commons-daemon" % "commons-daemon" % "1.1.0",
     "org.apache.ftpserver" % "ftpserver" % "1.1.1" pomOnly()
    )
   )

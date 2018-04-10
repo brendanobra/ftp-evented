@@ -20,6 +20,16 @@ class FtpEvented(config:Config ) {
   val serverFactory = new FtpServerFactory
   val listenerFactory = new ListenerFactory
 
+  def stop(ftpServer: FtpServer) = {
+    try{
+      ftpServer.stop()
+    }catch {
+      case e:Exception =>
+        e.printStackTrace()
+    }
+
+  }
+
   def start() = {
     val listenerConfig = config.getConfig("listener")
     val usersConfig = config.getConfig("users")
@@ -46,14 +56,12 @@ class FtpEvented(config:Config ) {
 
 
 
-   serverFactory.setUserManager( userManager )
+    serverFactory.setUserManager( userManager )
 
     val server = serverFactory.createServer
 
     server.start()
-    Thread.sleep(40000)
-    server.stop()
-
+    server
   }
 
 
@@ -62,8 +70,10 @@ class FtpEvented(config:Config ) {
 object  FtpEvented extends  App {
   val config = ConfigFactory.load().getConfig("FtpEvented")
   val ftpEvented = new FtpEvented( config )
-  ftpEvented.start();
+  val server = ftpEvented.start();
   Logger("FtpEvented").info("started")
+  Thread.sleep(40000)
+  ftpEvented.stop( server )
 
 
 }
